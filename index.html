@@ -96,9 +96,10 @@
         }
 
         .badge {
-            background: rgba(6, 182, 212, 0.2);
-            border: 1px solid rgba(6, 182, 212, 0.5);
-            color: var(--accent-cyan);
+            background: rgba(11, 15, 23, 0.78);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(76, 215, 246, 0.65);
+            color: #4CD7F6;
             padding: 6px 16px;
             border-radius: 9999px;
             font-size: 0.85rem;
@@ -353,16 +354,8 @@
                 font-size: 2.3rem; 
             }
             
-            .grid-3, .journey-grid, .prep-grid, .cost-grid, .notes-grid {
+            .grid-3, .journey-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .prep-grid {
-                gap: 32px;
-            }
-
-            .prep-frame {
-                padding: 28px;
             }
 
             .journey-head {
@@ -724,6 +717,22 @@
             color: var(--text-secondary);
             font-size: 0.8rem;
         }
+
+        /* Mobile stacking for sections whose base rules are defined below the
+           main media query — these must come last to win on source order. */
+        @media (max-width: 768px) {
+            .prep-grid, .cost-grid, .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prep-grid {
+                gap: 32px;
+            }
+
+            .prep-frame {
+                padding: 28px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -744,7 +753,7 @@
             <div class="hero-text">
                 <div class="badge">Private Circle</div>
                 <h1>Build with AI</h1>
-                <p>10 weeks of pure creation. The boys will learn to hack together their own games, build custom websites, and make AI music and videos.</p>
+                <p>10 weeks of pure creation. The boys will learn to hack together their own games, build custom websites, make AI music and videos — and even launch their own mini-startups.</p>
             </div>
 
             <div class="hero-stats">
