@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build with AI | Private Circle Class</title>
+    <style>
+        :root {
+            --bg-deep: #0B0F17;
+            --bg-surface: #131A26;
+            --bg-card: #1E2638;
+            --accent-cyan: #06B6D4;
+            --accent-purple: #A855F7;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* --- REDESIGNED FULL-SCREEN HERO SECTION --- */
+        .hero {
+            width: 100%;
+            position: relative;
+            overflow: hidden; /* Important for Ken Burns effect */
+            display: flex;
+            align-items: center; /* Vertically centers the text content on top of the image */
+        }
+
+        /* The image container that holds the animated background */
+        .hero-image-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Puts the image *behind* the text */            
+        }
+
+        /* The actual generated image asset */
+        .hero-image-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Important: Ensures the image covers the section while maintaining aspect ratio */
+            display: block;
+            opacity: 0.9; /* Slight decrease in opacity so dark text stands out more */
+        }
+
+        /* The dark overlay overlay makes text easier to read over light images */
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(55, 58, 63, 0.4), rgba(43, 53, 71, 0.7));
+            z-index: 2; /* Sits between the image and the text */
+        
+            /* Mix-blend-mode makes the white light interact naturally with the colors of the image underneath */
+            mix-blend-mode: normal;
+        }
+        
+        /* The content container holding the text and stats */
+        .hero-content {
+            position: relative;
+            z-index: 3; /* Sits on top of everything */
+            padding: 100px 0 60px 0; /* Padding creates the vertical space */
+            text-align: center;
+            margin-top: 40px;
+
+            /* ADD THIS: Forces the section to take up at least 65% of the total screen height */
+            min-height: 70vh; 
+    
+            /* Optional: Keeps text centered if the screen is massive */
+            /* display: flex; */
+            /* flex-direction: column; */
+            /* justify-content: center; */
+        }
+
+        .badge {
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid rgba(6, 182, 212, 0.5);
+            color: var(--accent-cyan);
+            padding: 6px 16px;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            background: linear-gradient(to right, #ffffff, #E2E8F0, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.4rem;
+            color: var(--text-primary); /* Text is now lighter to stand out against the image */
+            max-width: 750px;
+            margin: 0 auto 40px auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 20px;
+            background: rgba(19, 26, 38, 0.85); /* Slightly translucent */
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px); /* Adds a modern, soft glass blur to the stats box */
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: block;
+        }
+
+        .stat-lbl {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Define the movement (Ken Burns effect) animation */
+        @keyframes kenburns {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.1) translateX(-3%); /* Scale and slight left pan */
+            }
+        }
+
+        /* --- THE VALUE PROPOSITION --- */
+        .value-prop {
+            padding: 60px 0 40px 0; /* Adjusted padding to transition from hero section */
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent-cyan);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .prop-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .prop-card:hover {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .prop-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .prop-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        .prop-icon.cyan { background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan); }
+        .prop-icon.purple { background: rgba(168, 85, 247, 0.12); color: var(--accent-purple); }
+        .prop-icon.blue { background: rgba(96, 165, 250, 0.12); color: #93b4fb; }
+
+        .prop-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .prop-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* --- THE JOURNEY (TIMELINE) --- */
+        .journey {
+            padding: 60px 0;
+        }
+
+        .journey-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 24px;
+            margin-bottom: 50px;
+        }
+
+        .journey-head h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 6px;
+        }
+
+        .journey-head p {
+            color: var(--text-secondary);
+        }
+
+        .journey-bar {
+            height: 4px;
+            width: 128px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
+            flex-shrink: 0;
+            margin-bottom: 8px;
+        }
+
+        .journey-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 48px;
+        }
+
+        .phase-col {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .phase-col::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            border-radius: 2px;
+        }
+
+        .phase-col.cyan::before { background: rgba(6, 182, 212, 0.25); }
+        .phase-col.purple::before { background: rgba(168, 85, 247, 0.25); }
+
+        .phase-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .phase-col.cyan .phase-label { color: var(--accent-cyan); }
+        .phase-col.purple .phase-label { color: var(--accent-purple); }
+
+        .phase-col h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 8px 0 24px 0;
+        }
+
+        .journey-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .journey-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .journey-item svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .phase-col.cyan .journey-item svg { color: var(--accent-cyan); }
+        .phase-col.purple .journey-item svg { color: var(--accent-purple); }
+
+        .journey-item strong {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.98rem;
+        }
+
+        .journey-item span {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { 
+                font-size: 2.3rem; 
+            }
+            
+            .grid-3, .journey-grid, .prep-grid, .cost-grid, .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .prep-grid {
+                gap: 32px;
+            }
+
+            .prep-frame {
+                padding: 28px;
+            }
+
+            .journey-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            /* --- MOBILE HERO DESIGN OPTIMIZATION --- */
+            /* On mobile, the photo sits behind the title only; the stats box
+               drops below it onto the solid page background. */
+            .hero {
+                flex-direction: column;
+                align-items: stretch;
+                background: var(--bg-deep);
+            }
+
+            .hero-image-bg,
+            .hero-overlay {
+                display: none; /* replaced by a background on .hero-text below */
+            }
+
+            .hero-content {
+                position: static;
+                min-height: 0;
+                margin-top: 0;
+                padding: 0;
+            }
+
+            .hero-text {
+                padding: 70px 24px 44px;
+                background-image:
+                    linear-gradient(rgba(11, 15, 23, 0.35), rgba(11, 15, 23, 0.9)),
+                    url('hero-img.webp');
+                background-size: cover;
+                background-position: center;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+                margin: 24px auto 0 auto;
+                width: calc(100% - 48px); /* Centers box cleanly on mobile viewports */
+                background: var(--bg-surface); /* Solid ground layout ensures high text contrast */
+                backdrop-filter: none;
+            }
+        }
+        /* --- HOW TO PREPARE SECTION --- */
+        .prep-section {
+            padding: 60px 0;
+            margin-top: 40px;
+        }
+
+        .prep-frame {
+            border: 2px dashed transparent;
+            border-radius: 32px;
+            padding: 48px;
+            background-image:
+                linear-gradient(var(--bg-deep), var(--bg-deep)),
+                linear-gradient(to right, var(--accent-cyan), var(--accent-purple));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .prep-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: start;
+        }
+
+        .prep-heading {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .parent-callout {
+            background: rgba(34, 42, 61, 0.5);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .parent-callout-head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .parent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            background: var(--accent-purple);
+            color: #2c0051;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .parent-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .parent-callout-head h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .parent-callout p {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .prep-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .prep-step-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .step-num {
+            margin-top: 4px;
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 9999px;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .prep-link {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--accent-cyan);
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .prep-link:hover {
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+        }
+
+        .prep-note {
+            font-size: 0.85rem;
+            color: #A855F7;
+            display: block;
+            margin-top: 8px;
+            background: rgba(168, 85, 247, 0.08);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            line-height: 1.4;
+        }
+
+        /* --- DISCLAIMERS & PARENTAL CONSENT --- */
+        .disclaimer-section {
+            padding: 20px 0 60px 0;
+        }
+
+        .consent-box {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+
+        .consent-box h3 {
+            color: var(--accent-purple);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .consent-box h3 svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .consent-box p {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .notes-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .note-card {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .note-card.full {
+            grid-column: 1 / -1;
+        }
+
+        .note-icon {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .note-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .note-card strong {
+            display: block;
+            color: #CBD5E1;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .note-card span {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        /* --- COSTS --- */
+        .cost-section {
+            padding: 60px 0;
+        }
+
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .cost-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .cost-amount {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .cost-amount span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .cost-card.variable .cost-amount {
+            color: var(--accent-purple);
+        }
+
+        .cost-card h3 {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .cost-card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            margin-bottom: 16px;
+        }
+
+        .cost-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 9999px;
+        }
+
+        .cost-tag.required {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .cost-tag.optional {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        /* --- FOOTER --- */
+        .site-footer {
+            padding: 32px 0 16px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .site-footer p {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO WITH FULL-SCREEN IMAGE BACKGROUND AND KEN BURNS EFFECT -->
+    <section class="hero">
+        
+        <!-- Animated Background Image Container -->
+        <div class="hero-image-bg">
+            <img src="hero-img.webp" alt="Build with AI Kids collaborating in a library creative studio">
+        </div>
+
+        <!-- Layer of overlay to make text pop -->
+        <div class="hero-overlay"></div>
+
+        <!-- The foreground text content -->
+        <div class="hero-content container">
+            <div class="hero-text">
+                <div class="badge">Private Circle</div>
+                <h1>Build with AI</h1>
+                <p>10 weeks of pure creation. The boys will learn to hack together their own games, build custom websites, and make AI music and videos.</p>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item"><span class="stat-val">10 Weeks</span><span class="stat-lbl">Duration</span></div>
+                <div class="stat-item"><span class="stat-val">1.5 Hours</span><span class="stat-lbl">Weekly Session</span></div>
+                <div class="stat-item"><span class="stat-val">~5 Kids</span><span class="stat-lbl">Small Circle</span></div>
+                <div class="stat-item"><span class="stat-val">11-13 Years Old</span><span class="stat-lbl">Target Age</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE ENGINEERING APPROACH -->
+    <section class="value-prop">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Engineering Approach</h2>
+            </div>
+            <div class="grid-3">
+                <div class="prop-card">
+                    <div class="prop-icon cyan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                    </div>
+                    <h3>Real Tools</h3>
+                    <p>Master terminal workflows and pro-grade tools like Claude Code. We don't use toy environments; we build in the same spaces as senior engineers.</p>
+                </div>
+                <div class="prop-card">
+                    <div class="prop-icon purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    </div>
+                    <h3>Multi-Modal Projects</h3>
+                    <p>From complex application logic to AI-generated cinematic trailers and custom audio scores. Every project is a symphony of diverse AI models.</p>
+                </div>
+                <div class="prop-card">
+                    <div class="prop-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
+                    </div>
+                    <h3>Critical Thinking First</h3>
+                    <p>AI isn't a shortcut; it's a tireless debugger and creative collaborator. We teach students how to prompt, pivot, and problem-solve.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE JOURNEY -->
+    <section class="journey">
+        <div class="container">
+            <div class="journey-head">
+                <div>
+                    <h2>The Journey</h2>
+                    <p>From apprentice to startup founder in ten weeks.</p>
+                </div>
+                <div class="journey-bar"></div>
+            </div>
+
+            <div class="journey-grid">
+                <!-- PHASE 1 -->
+                <div class="phase-col cyan">
+                    <span class="phase-label">Weeks 1-5</span>
+                    <h3>The AI Builder Apprenticeship</h3>
+                    <ul class="journey-list">
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <div>
+                                <strong>Foundations</strong>
+                                <span>HTML sandboxes &amp; terminal mastery.</span>
+                            </div>
+                        </li>
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <div>
+                                <strong>Claude Code Integration</strong>
+                                <span>Pair programming with LLMs at the CLI level.</span>
+                            </div>
+                        </li>
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <div>
+                                <strong>Deploying to the Web</strong>
+                                <span>GitHub Pages and live site hosting.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- PHASE 2 -->
+                <div class="phase-col purple">
+                    <span class="phase-label">Weeks 6-10</span>
+                    <h3>The Startup Spin-Off</h3>
+                    <ul class="journey-list">
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M15 12v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+                            <div>
+                                <strong>MVP Ideation</strong>
+                                <span>Conceptualizing and mapping structural app logic.</span>
+                            </div>
+                        </li>
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M15 12v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+                            <div>
+                                <strong>Marketing &amp; Media</strong>
+                                <span>Generating AI audio/video commercials for the MVP.</span>
+                            </div>
+                        </li>
+                        <li class="journey-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M15 12v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+                            <div>
+                                <strong>QA &amp; Final Demo</strong>
+                                <span>Stress testing apps and presenting to the Circle.</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="prep-section">
+        <div class="container">
+            <div class="prep-frame">
+                <div class="prep-grid">
+                    <div class="prep-left">
+                        <h2 class="prep-heading">How to Prepare</h2>
+                        <div class="parent-callout">
+                            <div class="parent-callout-head">
+                                <div class="parent-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                </div>
+                                <h4>Parent Callout</h4>
+                            </div>
+                            <p>This is a 'Snack &amp; code' hang out. While focused, it's a relaxed, creative environment.</p>
+                        </div>
+                    </div>
+                    <div class="prep-right">
+                        <div class="prep-steps">
+                            <div class="prep-step-row">
+                                <div class="step-num">1</div>
+                                <div>
+                                    <p class="step-title">Hardware Check</p>
+                                    <p class="step-desc">MacBook (M1 chip or newer recommended). Since the boys will be exploring the terminal and files hands-on, please send a device that doesn't hold sensitive personal or family information.</p>
+                                </div>
+                            </div>
+                            <div class="prep-step-row">
+                                <div class="step-num">2</div>
+                                <div>
+                                    <p class="step-title">Account Access</p>
+                                    <p class="step-desc">Use this link to activate <strong>one week of Claude Code, free</strong>:</p>
+                                    <a class="prep-link" href="https://claude.ai/referral/KM1UrVOvdw" target="_blank">claude.ai/referral/KM1UrVOvdw</a>
+                                    <span class="prep-note">👋 Please plan to join your child for the first 20 minutes of the first class to help them set up their account.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COSTS -->
+    <section class="cost-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>What It Costs</h2>
+            </div>
+            <div class="cost-grid">
+                <div class="cost-card">
+                    <div class="cost-amount">$20<span> / month</span></div>
+                    <h3>Claude Code Subscription</h3>
+                    <p>A Claude Pro plan ($20/month) is required for each student — this is what unlocks Claude Code for the whole program. Billed directly by Anthropic, and the first week is free using the link above.</p>
+                    <span class="cost-tag required">Required</span>
+                </div>
+                <div class="cost-card variable">
+                    <div class="cost-amount">Varies</div>
+                    <h3>Creative AI Tools</h3>
+                    <p>Generative audio and video tools may carry their own usage costs. These are optional and depend entirely on what each kid wants to build — many projects need little or no extra spend.</p>
+                    <span class="cost-tag optional">Based on interest</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISCLAIMERS & PARENTAL CONSENT -->
+    <section class="disclaimer-section">
+        <div class="container">
+            <div class="consent-box">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Parental Consent &amp; Age Requirements
+                </h3>
+                <p>Claude and Claude Code are provided by Anthropic under terms that require account holders to be 18 or older. Because everyone in this class is a minor, each child participates using a Claude Pro account that is <strong>created, owned, and supervised by a parent or legal guardian</strong>. By enrolling your child, you confirm that you are the account holder and that you consent to — and will actively supervise — your child's use of these AI tools throughout the program.</p>
+            </div>
+
+            <div class="consent-box">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Liability &amp; Assumption of Risk
+                </h3>
+                <p>This class is hosted in a private residence, and participation is entirely voluntary and at your family's own risk. To the fullest extent permitted by law, the host and instructor accept <strong>no responsibility or liability for any injury, illness, accident, allergic reaction, loss, or damage to a child or their belongings</strong> that may occur before, during, or after any session, including while on or around the premises. By enrolling your child, you (the parent or legal guardian) confirm that your child is in good health and able to participate safely; you remain solely responsible for your child's behavior, any allergies or dietary needs (including snacks), and their drop-off, pick-up, and transportation; and you agree to <strong>release and hold the host harmless</strong> from any and all claims arising out of your child's participation.</p>
+            </div>
+            <div class="fine-print">
+                <span class="notes-label">Please also note</span>
+                <div class="notes-grid">
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9.3 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.3 9 9"/></svg>
+                        </div>
+                        <div>
+                            <strong>Just for fun</strong>
+                            <span>An informal, recreational learning circle — not an accredited course. No grades, certifications, or guaranteed outcomes.</span>
+                        </div>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <div>
+                            <strong>AI isn't perfect</strong>
+                            <span>AI tools can produce inaccurate or unexpected output. Sessions are supervised, but parents remain responsible for what their child generates and accesses.</span>
+                        </div>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </div>
+                        <div>
+                            <strong>Privacy first</strong>
+                            <span>Children should not enter sensitive personal or family information into any tool, and devices should be free of such data.</span>
+                        </div>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <strong>Billing</strong>
+                            <span>The Claude Pro subscription (~$20/mo) is paid directly to Anthropic by the parent and is separate from any class fees.</span>
+                        </div>
+                    </div>
+                    <div class="note-card full">
+                        <div class="note-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        </div>
+                        <div>
+                            <strong>Independent class</strong>
+                            <span>This class is independent and is not affiliated with, endorsed by, or sponsored by Anthropic. "Claude" and "Claude Code" are trademarks of Anthropic.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>© 2026 Build with AI · Private Circle</p>
+        </div>
+    </footer>
+</body>
+</html>

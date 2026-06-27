@@ -1,0 +1,5 @@
+# QA / scratch captures — never commit (regenerable)
+*.png
+*.jpg
+*.jpeg
+.playwright-mcp/
